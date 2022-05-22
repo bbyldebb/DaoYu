@@ -1,5 +1,6 @@
 @import url(flex.css);
+@import url(color.css);
 
 body {
-    margin: 0;
+  margin: 0;
 }
