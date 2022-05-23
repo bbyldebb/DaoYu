@@ -20,6 +20,12 @@
       "style": {
         "navigationBarTitleText": "选择话题"
       }
+    },
+    {
+      "path": "pages/detail/detail",
+      "style": {
+        "navigationBarTitleText": "帖子详情"
+      }
     }
   ],
   "globalStyle": {
