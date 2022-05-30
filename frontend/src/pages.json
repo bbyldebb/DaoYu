@@ -26,6 +26,24 @@
       "style": {
         "navigationBarTitleText": "帖子详情"
       }
+    },
+    {
+      "path": "pages/person/person",
+      "style": {
+        "navigationBarTitleText": "个人主页"
+      }
+    },
+    {
+      "path": "pages/person/edit-profile",
+      "style": {
+        "navigationBarTitleText": "资料修改"
+      }
+    },
+    {
+      "path": "pages/person/profile",
+      "style": {
+        "navigationBarTitleText": "详细资料"
+      }
     }
   ],
   "globalStyle": {
@@ -33,5 +51,15 @@
     "navigationBarTitleText": "uni-app",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/index/index"
+      },
+      {
+        "pagePath": "pages/person/person"
+      }
+    ]
   }
 }
