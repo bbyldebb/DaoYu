@@ -127,13 +127,13 @@ export default {
         selectedIconPath: "home-fill",
         text: '首页',
         midButton: true,
-        pagePath: ''
+        pagePath: '/pages/index/index'
       },
       {
         iconPath: "account",
         selectedIconPath: "account-fill",
         text: '个人',
-        pagePath: ''
+        pagePath: '/pages/person/person',
       }
       ],
       postInfos: [
