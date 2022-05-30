@@ -125,7 +125,7 @@ export default {
     getOtherUserInformation(this.userID).then((res) => {
       if (res[1].statusCode === 200) {
         this.person = res[1].data.data;
-        const Base64 = require('js-base64').Base64;
+        // const Base64 = require('js-base64').Base64;
         this.person.nickName = Base64.decode(this.person.nickName);
         let str = '她';
         if (this.person.sex === '男') {

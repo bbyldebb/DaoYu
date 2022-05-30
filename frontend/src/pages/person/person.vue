@@ -38,7 +38,7 @@
             <view class="blankImg flex flex-col main-axis-center">
               <view>
                 <u-icon class="icon-item"
-                        name="/static/person/1.png"
+                        name="/static/person/person/1.png"
                         size="65"></u-icon>
               </view>
               <view style="font-weight: bold; color: gray; font-size: 26rpx;">互助平台</view>
@@ -46,7 +46,7 @@
             <view class="blankImg flex flex-col main-axis-center">
               <view>
                 <u-icon class="icon-item"
-                        name="/static/person/2.png"
+                        name="/static/person/person/2.png"
                         size="65"></u-icon>
               </view>
               <view style="font-weight: bold; color: gray; font-size: 26rpx;">新冠疫情</view>
@@ -54,7 +54,7 @@
             <view class="fullImg flex flex-col main-axis-center">
               <view>
                 <u-icon class="icon-item"
-                        name="/static/person/3.png"
+                        name="/static/person/person/3.png"
                         size="65"></u-icon>
               </view>
               <view style="font-weight: bold; color: gray; font-size: 26rpx;">众志成城</view>
@@ -64,7 +64,7 @@
             <view class="fullImg flex flex-col main-axis-center">
               <view>
                 <u-icon class="icon-item"
-                        name="/static/person/4.png"
+                        name="/static/person/person/4.png"
                         size="65"></u-icon>
               </view>
               <view style="font-weight: bold; color: gray; font-size: 26rpx;">邻里之间</view>
@@ -72,7 +72,7 @@
             <view class="fullImg flex flex-col main-axis-center">
               <view>
                 <u-icon class="icon-item"
-                        name="/static/person/5.png"
+                        name="/static/person/person/5.png"
                         size="65"></u-icon>
               </view>
               <view style="font-weight: bold; color: gray; font-size: 26rpx;">人间大爱</view>
@@ -80,7 +80,7 @@
             <view class="fullImg flex flex-col main-axis-center">
               <view>
                 <u-icon class="icon-item"
-                        name="/static/person/6.png"
+                        name="/static/person/person/6.png"
                         size="65"></u-icon>
               </view>
               <view style="font-weight: bold; color: gray; font-size: 26rpx;">强大合力</view>
