@@ -10,7 +10,8 @@
         <view class="header flex main-axis-between">
           <view class="avatar-info flex main-axis-between">
             <u-avatar :src="postInfo.avatarUrl"
-                      :size="90"></u-avatar>
+                      :size="90"
+                      @click="toUserProfile"></u-avatar>
             <view class="name-time font-small">
               <view class="name">{{ postInfo.nickName }}</view>
               <view class="name-place flex gray-text main-axis-between">
@@ -102,15 +103,6 @@
 
           <view class="post-detail"
                 @click="detail(postInfo.id)">求助详情 ></view>
-
-          <!-- <view class="button-icon">
-            <u-icon class="absolute-button"
-                    name="trash"
-                    size="35"
-                    @click="deletePost(postInfo.id)"
-                    v-show="postInfo.feedback.user === userId"></u-icon>
-          </view> -->
-
         </view>
       </view>
     </u-card>
@@ -173,9 +165,12 @@ export default {
       }
     },
     detail (postID) {
-      if (postID === -1) return;
+      // if (postID === -1) return;
+      // uni.navigateTo({
+      //   url: `../feedback/feedbackDetail?id=${postID}`,
+      // });
       uni.navigateTo({
-        url: `../feedback/feedbackDetail?id=${postID}`,
+        url: `../detail/detail?id=${postID}`,
       });
     },
     preview (index) {
@@ -184,24 +179,11 @@ export default {
         urls: this.imageList,
       });
     },
-    deletePost (postID) {
-      const that = this;
-      uni.showModal({
-        title: '删除反馈',
-        content: '您确定要删除此条反馈吗？',
-        success: function (res) {
-          if (res.confirm) {
-            deletePost(postID).then((res) => {
-              if (res[1].statusCode !== 200) {
-                that.$emit('deleteFeedback', -1);
-              } else {
-                that.$emit('deleteFeedback', postID);
-              }
-            });
-          }
-        },
+    toUserProfile () {
+      uni.navigateTo({
+        url: `../person/profile`,
       });
-    },
+    }
   },
 };
 </script>

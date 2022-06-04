@@ -168,7 +168,7 @@ export default {
           name: '我的求助',
         },
         {
-          name: '浏览历史',
+          name: '我的关注',
         }
       ],
       // 当前样式
@@ -178,27 +178,26 @@ export default {
       currentBottomTab: 2,
       collections: null,
       userPosts: null,
-      bottomTabList: [{
-        iconPath: "email",
-        selectedIconPath: "email-fill",
-        text: '消息',
-        count: 0,
-        isDot: false,
-        pagePath: ''
-      },
-      {
-        iconPath: "home",
-        selectedIconPath: "home-fill",
-        text: '首页',
-        midButton: true,
-        pagePath: '/pages/index/index'
-      },
-      {
-        iconPath: "account",
-        selectedIconPath: "account-fill",
-        text: '个人',
-        pagePath: '/pages/person/person',
-      }
+      bottomTabList: [
+        {
+          iconPath: "home",
+          selectedIconPath: "home-fill",
+          text: '首页',
+          midButton: true,
+          pagePath: '/pages/index/index'
+        },
+        {
+          iconPath: "fingerprint",
+          selectedIconPath: "fingerprint",
+          text: '登录',
+          pagePath: '/pages/person/login'
+        },
+        {
+          iconPath: "account",
+          selectedIconPath: "account-fill",
+          text: '个人',
+          pagePath: '/pages/person/person',
+        }
       ],
       show_message: '授权登录',
     };

@@ -4,8 +4,10 @@
     <!-- 搜索栏 -->
     <view style="padding: 25rpx 15rpx 0rpx; height: 7%;">
       <u-search placeholder="上海疫情互助"
-                v-model="keyword"
-                :clearabled="true"></u-search>
+                :disabled="true"
+                :show-action="false"
+                :shape="square"
+                @click="goSearch"></u-search>
     </view>
 
     <!-- 此刻与关注的tab栏 -->
@@ -113,28 +115,26 @@ export default {
         'https://n.sinaimg.cn/sinakd2020321s/783/w950h633/20200321/37a1-ireifzh1305231.jpg',
         'https://att2.citysbs.com/hangzhou/2020/02/08/20/middle_1080x720-204341_v2_10701581165821468_3d1c277d226673ef0e0c6c082f6efd1d.jpg',
       ],
-      currentBottomTab: 1,
-      bottomTabList: [{
-        iconPath: "email",
-        selectedIconPath: "email-fill",
-        text: '消息',
-        count: 0,
-        isDot: false,
-        pagePath: ''
-      },
-      {
-        iconPath: "home",
-        selectedIconPath: "home-fill",
-        text: '首页',
-        midButton: true,
-        pagePath: '/pages/index/index'
-      },
-      {
-        iconPath: "account",
-        selectedIconPath: "account-fill",
-        text: '个人',
-        pagePath: '/pages/person/person',
-      }
+      currentBottomTab: 0,
+      bottomTabList: [
+        {
+          iconPath: "home",
+          selectedIconPath: "home-fill",
+          text: '首页',
+          pagePath: '/pages/index/index'
+        },
+        {
+          iconPath: "fingerprint",
+          selectedIconPath: "fingerprint",
+          text: '登录',
+          pagePath: '/pages/person/login'
+        },
+        {
+          iconPath: "account",
+          selectedIconPath: "account-fill",
+          text: '个人',
+          pagePath: '/pages/person/person',
+        }
       ],
       postInfos: [
         {
@@ -219,6 +219,11 @@ export default {
     publishMoments () {
       uni.navigateTo({
         url: '../publish/publish',
+      });
+    },
+    goSearch () {
+      uni.navigateTo({
+        url: '../index/search',
       });
     }
   }
