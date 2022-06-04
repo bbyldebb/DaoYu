@@ -44,6 +44,18 @@
       "style": {
         "navigationBarTitleText": "详细资料"
       }
+    },
+    {
+      "path": "pages/index/search",
+      "style": {
+        "navigationBarTitleText": "搜索"
+      }
+    },
+    {
+      "path": "pages/person/login",
+      "style": {
+        "navigationBarTitleText": "授权登录"
+      }
     }
   ],
   "globalStyle": {
@@ -59,6 +71,9 @@
       },
       {
         "pagePath": "pages/person/person"
+      },
+      {
+        "pagePath": "pages/person/login"
       }
     ]
   }

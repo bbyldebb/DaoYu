@@ -37,32 +37,6 @@
         <view class="line"></view>
       </view>
 
-      <view class="fans-follow-likes-bar-container bar-container">
-        <view class="fans-bar bar">
-          <view class="icon">
-            <u-image width="40rpx"
-                     height="40rpx"
-                     src="/static/details/fans.png"></u-image>
-          </view>
-          <text>粉丝：{{ person.fans }}</text>
-        </view>
-        <view class="follow-bar bar">
-          <view class="icon">
-            <u-image width="40rpx"
-                     height="40rpx"
-                     src="/static/details/follow.png"></u-image>
-          </view>
-          <text>关注：{{ person.followers }}</text>
-        </view>
-        <view class="likes-bar bar">
-          <view class="icon">
-            <u-image width="37rpx"
-                     height="37rpx"
-                     src="/static/details/likes.png"></u-image>
-          </view>
-          <text>获赞：{{ person.likes }}</text>
-        </view>
-      </view>
       <view class="division-line">
         <view class="line"></view>
       </view>
@@ -81,16 +55,6 @@
         <view class="line"></view>
       </view>
 
-      <view class="identity-bar-container bar-container">
-        <view class="identity-bar bar">
-          <view class="icon">
-            <u-image width="33rpx"
-                     height="33rpx"
-                     src="/static/details/identity.png"></u-image>
-          </view>
-          <text>身份：{{ person.identity }}</text>
-        </view>
-      </view>
       <view class="division-line">
         <view class="line"></view>
       </view>
@@ -211,18 +175,6 @@ page {
 
 .birth-bar {
   width: 60%;
-}
-
-.fans-bar {
-  width: 33%;
-}
-
-.follow-bar {
-  width: 33%;
-}
-
-.likes-bar {
-  width: 33%;
 }
 
 .line {
