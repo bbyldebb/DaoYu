@@ -90,8 +90,8 @@
   </view>
 </template>
 
-</style>
 <script>
+import { getAllPost } from '../../js/post';
 import post from '../../components/post.vue'
 export default {
   components: {
@@ -184,6 +184,16 @@ export default {
     }
   },
   onLoad () {
+    getAllPost().then((res) => {
+      console.log(res[1].data)
+      this.postInfos = res[1].data
+
+      if (res[1].statusCode === 200) {
+        console.log(1)
+      } else {
+        console.log(2)
+      }
+    });
   },
   // mounted () {
   //   let tabBottom;

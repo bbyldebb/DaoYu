@@ -69,6 +69,7 @@
     "@vue/shared": "^3.0.0",
     "core-js": "^3.6.5",
     "flyio": "^0.6.2",
+    "js-base64": "^3.7.2",
     "regenerator-runtime": "^0.12.1",
     "sass-loader": "^7.3.1",
     "uview-ui": "^1.8.4",
