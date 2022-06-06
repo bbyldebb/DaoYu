@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import { getAllPost } from '../../js/post';
+import { getAllPost } from '../../js/api';
 import post from '../../components/post.vue'
 export default {
   components: {
