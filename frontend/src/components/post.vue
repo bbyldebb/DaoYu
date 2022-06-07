@@ -9,37 +9,38 @@
       <view slot="body">
         <view class="header flex main-axis-between">
           <view class="avatar-info flex main-axis-between">
-            <u-avatar :src="postInfo.avatarUrl"
+            <u-avatar :src="postInfo.user.avatarImg"
                       :size="90"
-                      @click="toUserProfile"></u-avatar>
-            <view class="name-time font-small">
-              <view class="name">{{ postInfo.nickName }}</view>
+                      @click="toUserProfile(postInfo.user.userID)"></u-avatar>
+            <view class="name-time font-small"
+                  @click="toUserProfile(postInfo.user.userID)">
+              <view class="name">{{ postInfo.user.nickName }}</view>
               <view class="name-place flex gray-text main-axis-between">
-                <view>{{ postInfo.time }}</view>
+                <view>{{ postInfo.post.timeStr }}</view>
                 <view v-show="
-                                        postInfo.place != '我在这里' &&
-                                        postInfo.place &&
-                                        postInfo.place != ''
-                                    ">来自{{ postInfo.place }}</view>
+                                        postInfo.post.address != '我在这里' &&
+                                        postInfo.post.address &&
+                                        postInfo.post.address != ''
+                                    ">来自{{ postInfo.post.address }}</view>
               </view>
             </view>
             <view class="process-view"
-                  @click="PostDetail(postInfo)">
+                  @click="modifyProcess()">
               <u-image src="/static/post/unsolved.png"
-                       width="95rpx"
-                       height="95rpx"
-                       v-show="isSolved"></u-image>
+                       width="98rpx"
+                       height="98rpx"
+                       v-show="postInfo.post.status==0"></u-image>
               <u-image src="/static/post/solved.png"
                        width="95rpx"
                        height="95rpx"
-                       v-show="!isSolved"></u-image>
+                       v-show="postInfo.post.status!=0"></u-image>
             </view>
           </view>
           <u-toast ref="uToast" />
         </view>
         <view class="post-content u-line-3 font-small"
-              @click="PostDetail(postInfo)">
-          {{ postInfo.content }}
+              @click="detail()">
+          {{ postInfo.post.content }}
         </view>
 
         <view class="tags flex flex-wrap">
@@ -53,14 +54,13 @@
         </view>
 
         <view class="images flex flex-warp"
-              v-if="showImage">
+              v-show="postInfo.post.image">
           <u-image class="u-image"
                    width="220rpx"
                    height="220rpx"
-                   v-for="(image, index) in postInfo.images"
                    :key="image"
-                   :src="image"
-                   @click="preview(index)"></u-image>
+                   :src="postInfo.post.image"
+                   @click="preview()"></u-image>
         </view>
 
         <view class="button flex main-axis-start">
@@ -68,7 +68,7 @@
           <view class="button-icon flex">
             <u-icon name="heart"
                     size="37"
-                    @click="collect"
+                    @click="collect()"
                     v-show="!isCollected"></u-icon>
             <view class="font-small"
                   style="margin-left: 7rpx"
@@ -77,7 +77,7 @@
             </view>
             <u-icon name="heart-fill"
                     size="37"
-                    @click="cancelCollect"
+                    @click="cancelCollect()"
                     v-show="isCollected"></u-icon>
             <view class="font-small"
                   style="margin-left: 7rpx"
@@ -89,8 +89,8 @@
           <view class="button-icon flex">
             <u-icon name="chat"
                     size="37"
-                    @click="PostDetail"></u-icon>
-            <view class="font-small">{{ commentNumber }}</view>
+                    @click="comment()"></u-icon>
+            <view class="font-small">{{ postInfo.post.commentNum }}</view>
           </view>
 
           <view class="button-icon flex">
@@ -98,11 +98,12 @@
                      width="37rpx"
                      height="37rpx"></u-image>
             <view class="font-small"
-                  style="margin-left: 7rpx">热度{{postInfo.hotNumber}}</view>
+                  style="margin-left: 7rpx">{{postInfo.post.hotNum}}</view>
           </view>
 
           <view class="post-detail"
-                @click="detail(postInfo.id)">求助详情 ></view>
+                v-show="!isOpen"
+                @click="detail()">求助详情 ></view>
         </view>
       </view>
     </u-card>
@@ -112,77 +113,66 @@
 export default {
   props: ['postInfo', 'isOpen', 'isPersonHomepage'],
   data () {
-    // const Base64 = require('js-base64').Base64;
     return {
-      nickName: Base64.decode(this.postInfo.nickName),
-      inputContent: null,
-      isEditComment: false,
-      showHead: false,
-      showFoot: false,
-      showImage: false,
-      commentNumber: 0,
       isCollected: false,
-      isSolved: false,
-      userId: 0,
-      base: baseUrl,
-      imageList: [],
-      showDelete: false,
+      userID: 0,
     };
   },
-  mounted: function () {
-    this.loadData();
-    for (let index = 0; index < this.postInfo.images.length; index++) {
-      this.imageList.push(baseUrl + this.postInfo.images[index].image);
-    }
-  },
-  watch: {
-    postInfo: {
-      handler () {
-        this.loadData();
-      },
-    },
-  },
+  // mounted: function () {
+  //   this.loadData();
+  // },
+  // watch: {
+  //   postInfo: {
+  //     handler () {
+  //       this.loadData();
+  //     },
+  //   },
+  // },
   methods: {
-    loadData (postInfo) {
-      if (!postInfo) {
-        postInfo = this.postInfo;
-      }
-      if (typeof postInfo.images !== 'undefined') {
-        this.showImage = true;
-      }
-      this.commentNumber = postInfo.commentNumber;
-      this.isSolved = postInfo.solved;
-      this.isFollow = postInfo.isFollow;
-      this.userId = uni.getStorageSync('userId');
-    },
-    PostDetail () {
-      if (this.isOpen) {
-        uni.navigateTo({
-          url: `../feedback/feedbackDetail?id=${this.postInfo.id}`,
-        });
+    // loadData (postInfo) {
+    //   if (!postInfo) {
+    //     postInfo = this.postInfo;
+    //   }
+    //   this.commentNumber = postInfo.commentNumber;
+    //   this.isSolved = postInfo.solved;
+    //   this.isFollow = postInfo.isFollow;
+    //   this.userId = uni.getStorageSync('userId');
+    // },
+    modifyProcess () {
+      if (!this.isOpen) {
+        this.detail();
       } else {
+        console.log('修改状态');
+      }
+    },
+    comment () {
+      if (!this.isOpen) {
+        this.detail();
+      } else {
+        console.log('聚焦评论框');
         uni.$emit('focus');
       }
     },
-    detail (postID) {
-      // if (postID === -1) return;
-      // uni.navigateTo({
-      //   url: `../feedback/feedbackDetail?id=${postID}`,
-      // });
-      uni.navigateTo({
-        url: `../detail/detail?id=${postID}`,
-      });
+    detail () {
+      if (!this.isOpen) {
+        uni.navigateTo({
+          url: `../detail/detail?id=${this.postInfo.post.postID}`,
+        });
+      }
     },
-    preview (index) {
+    preview () {
       wx.previewImage({
-        current: this.imageList[index].image, // 当前显示图片的http链接
-        urls: this.imageList,
+        current: this.postInfo.post.image, // 当前显示图片的http链接
+        urls: [this.postInfo.post.image],
       });
     },
-    toUserProfile () {
-      uni.navigateTo({
-        url: `../person/profile`,
-      });
+    toUserProfile (otherUserID) {
+      if (!this.isOpen) {
+        console.log(otherUserID)
+        uni.navigateTo({
+          url: `../person/profile`,
+        });
+      }
     }
   },
 };

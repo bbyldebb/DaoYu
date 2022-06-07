@@ -12,20 +12,21 @@
     <u-button hover-class="none"
               @click="getUserProfile"
               :custom-style="customStyle"
-              v-if="!getNewToken">授权登录</u-button>
-    <u-button type="warning"
-              @click="login"
+              v-if="getNewToken">授权登录</u-button>
+    <u-button hover-class="none"
+              @click="getUserProfile"
               :custom-style="customStyle"
-              v-else>过期请重新登录</u-button>
+              v-if="!getNewToken">您已登录，无需授权</u-button>
+    <u-toast ref="uToast" />
   </view>
 </template>
 <script>
+import { login } from '../../js/api';
 export default {
-  onLoad (options) {
-    this.getNewToken = options.getNewToken;
-    if (this.getNewToken) {
-      this.userInfo = uni.getStorageSync('userInfo');
-    }
+  onLoad () {
+    this.userInfo = uni.getStorageSync('userInfo');
+    this.userID = uni.getStorageSync('userID');
+    if (this.userInfo != '' && this.userID != '') this.getNewToken = false;
   },
   data () {
     return {
@@ -33,65 +34,62 @@ export default {
         backgroundColor: 'var(--primary-color-1)',
         color: 'white',
         marginTop: '50rpx',
-        width: '270rpx',
+        width: '300rpx',
         height: '70rpx',
       },
       userInfo: {},
-      getNewToken: false,
+      userID: null,
+      getNewToken: true,
     };
   },
   methods: {
     toHome () {
-      console.log(111),
-        uni.reLaunch({
-          url: "../index/index",
-        });
-    },
-    getUserProfile () {
-      uni.getUserProfile({
-        desc: '用于首次登陆授权',
-        success: (res) => {
-          this.userInfo = res.userInfo;
-          uni.setStorageSync('userInfo', this.userInfo);
-          this.login(false);
-        },
-        fail: (res) => {
-          console.log(res);
-        },
+      uni.reLaunch({
+        url: "../index/index",
       });
     },
-    login (getNewToken) {
+    getUserProfile () {
+      if (this.getNewToken == true) {
+        uni.getUserProfile({
+          desc: '用于首次登陆授权',
+          success: (res) => {
+            this.userInfo = res.userInfo;
+            uni.setStorageSync('userInfo', this.userInfo);
+            this.login();
+          },
+          fail: (res) => {
+            console.log(res);
+          },
+        });
+      }
+      else {
+        this.$refs.uToast.show({
+          title: '您已授权登录，\n无需再次授权',
+          type: 'success',
+        });
+        uni.$emit('login');
+        setTimeout(() => {
+          this.toHome();
+        }, 1000);
+      }
+    },
+    login () {
       uni.login({
         success: (res) => {
           uni.request({
-            url: '/user/login/',
-            data: {
-              code: res.code,
-            },
-            header: {
-              'content-type': 'application/x-www-form-urlencoded',
-            },
+            url: `https://api.weixin.qq.com/sns/jscode2session?appid=wx672dc2b334d3b9ae&secret=93a88d99d1a39698f9715ab1b5f1db19&js_code=${res.code}&grant_type=authorization_code`,
             method: 'POST',
             success: (res) => {
-              console.log(res.data.data.token);
-              uni.setStorage({
-                key: 'token',
-                data: res.data.data.token,
-              });
-              uni.setStorage({
-                key: 'userId',
-                data: res.data.data.user_id,
-              });
-              console.log('开启轮询');
-              uni.$emit('login');
-              if (!getNewToken) {
-                this.updateUserInfo();
-              }
-              uni.switchTab({
-                url: 'index',
-                fail: (res) => {
-                  console.log(res);
-                },
+              uni.setStorageSync('userID', res.data.openid);
+              login(res.data.openid, this.userInfo.nickName, this.userInfo.avatarUrl).then((res) => {
+                this.$refs.uToast.show({
+                  title: '登录成功',
+                  type: 'success',
+                });
+                uni.$emit('login');
+                setTimeout(() => {
+                  this.toHome();
+                }, 700);
               });
             },
             fail: (res) => {
@@ -99,21 +97,6 @@ export default {
             },
           });
         },
-      });
-    },
-    updateUserInfo () {
-      // 更新个人信息
-      const Base64 = require('js-base64').Base64;
-      modifyUserInformation(
-        Base64.encode(this.userInfo.nickName),
-        this.userInfo.avatarUrl
-      ).then((res) => {
-        if (res[1].statusCode === 200) {
-          res[1].data.data.nickName = Base64.decode(res[1].data.data.nickName);
-          uni.setStorageSync('userInfo', res[1].data.data);
-        } else {
-          console.log(res);
-        }
       });
     },
   },
