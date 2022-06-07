@@ -226,7 +226,9 @@ export default {
     //     this.feedbacks = res[1].data.data.feedbacks;
     //   });
     // });
-    if (uni.getStorageSync('userId') === '') {
+    console.log(uni.getStorageSync('userInfo'));
+    console.log(uni.getStorageSync('userID'));
+    if (uni.getStorageSync('userID') === '') {
       this.show_message = '授权登录';
     } else {
       this.show_message = '编辑资料';
