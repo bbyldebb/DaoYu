@@ -4,7 +4,7 @@
       <u-image width="150rpx"
                height="150rpx"
                shape="circle"
-               :src="person.avatarUrl"></u-image>
+               :src="person.avatarImg"></u-image>
     </view>
     <view class="name-bar flex main-axis-center">
       <text>{{ person.nickName }}</text>
@@ -20,7 +20,7 @@
           <view class="icon">
             <u-image width="40rpx"
                      height="40rpx"
-                     src="/static/details/sex.png"></u-image>
+                     src="/static/person/profile/sex.png"></u-image>
           </view>
           <text>性别：{{ person.sex }}</text>
         </view>
@@ -28,15 +28,11 @@
           <view class="icon">
             <u-image width="35rpx"
                      height="35rpx"
-                     src="/static/details/birth.png"></u-image>
+                     src="/static/person/profile/birth.png"></u-image>
           </view>
-          <text>生日：{{ person.birth }}</text>
+          <text>生日：{{ person.birthday }}</text>
         </view>
       </view>
-      <view class="division-line">
-        <view class="line"></view>
-      </view>
-
       <view class="division-line">
         <view class="line"></view>
       </view>
@@ -46,15 +42,25 @@
           <view class="icon">
             <u-image width="38rpx"
                      height="38rpx"
-                     src="/static/details/place.png"></u-image>
+                     src="/static/person/profile/place.png"></u-image>
           </view>
-          <text>地址：{{ person.place }}</text>
+          <text>电话：{{ person.phoneNum }}</text>
         </view>
       </view>
       <view class="division-line">
         <view class="line"></view>
       </view>
 
+      <view class="place-bar-container bar-container">
+        <view class="place-bar bar">
+          <view class="icon">
+            <u-image width="38rpx"
+                     height="38rpx"
+                     src="/static/person/profile/place.png"></u-image>
+          </view>
+          <text>地址：{{ person.address }}</text>
+        </view>
+      </view>
       <view class="division-line">
         <view class="line"></view>
       </view>
@@ -64,7 +70,7 @@
           <view class="icon">
             <u-image width="33rpx"
                      height="33rpx"
-                     src="/static/details/intro.png"></u-image>
+                     src="/static/person/profile/intro.png"></u-image>
           </view>
           <text>简介：{{ person.introduction }}</text>
         </view>
@@ -77,32 +83,34 @@
 </template>
 
 <script>
+import { getUserInfo } from '../../js/api'
 export default {
   data () {
     return {
       person: [],
-      userID: null,
     };
   },
   onLoad (options) {
-    this.userID = options.userID;
-    getOtherUserInformation(this.userID).then((res) => {
+    getUserInfo(options.userID).then((res) => {
       if (res[1].statusCode === 200) {
-        this.person = res[1].data.data;
-        // const Base64 = require('js-base64').Base64;
-        this.person.nickName = Base64.decode(this.person.nickName);
-        let str = '她';
-        if (this.person.sex === '男') {
-          str = '他';
+        this.person = res[1].data;
+        let str = '他';
+        this.person.sex = '男';
+        if (this.person.gender === 2) {
+          str = '她';
+          this.person.sex = '她';
         }
-        if (this.person.introduction === '') {
+        if (this.person.introduction == null) {
           this.person.introduction = '这个人很神秘，什么都没有写';
         }
-        if (this.person.place === '') {
-          this.person.place = str + '还没有填写地址';
+        if (this.person.phoneNum == null) {
+          this.person.phoneNum = str + '还没有填写电话号码';
         }
-        if (this.person.birth == null) {
-          this.person.birth = str + '还没有填写生日';
+        if (this.person.address == null) {
+          this.person.address = str + '还没有填写地址';
+        }
+        if (this.person.birthday == null) {
+          this.person.birthday = str + '还没有填写生日';
         }
       } else {
         console.log(res[1].data.data);
