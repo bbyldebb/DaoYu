@@ -25,17 +25,6 @@ const modifyUserInfo = function (userID,gender,birthday,address,introduction) {
 	});
 }; 
 
-const modify = function (userID,gender,birthday,address,introduction) {
-	// https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx672dc2b334d3b9ae&secret=93a88d99d1a39698f9715ab1b5f1db19&code=023Crall2ykmj94Uh1nl23b8Cq1Cral6&grant_type=authorization_code
-	return request('/modifyUserInfo', 'GET',{
-		userID:userID,
-		gender:gender,
-		birthday:birthday,
-		address:address,
-		introduction:introduction
-	});
-}; 
-
 // ==============POST===================
 
 const getAllPost = function () {

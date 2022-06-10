@@ -49,8 +49,6 @@
                 :post-info="postInfo"
                 :isOpen="false"
                 :isPersonHomepage="false"
-                @deletePost="updateDeletePost"
-                @refreshLike="refreshLike"
                 @refreshCollect="refreshCollect"></post>
           <view style="height: 120rpx;"></view>
 
@@ -80,8 +78,6 @@
                 :post-info="followPostInfo"
                 :isOpen="false"
                 :isPersonHomepage="false"
-                @deletePost="updateDeletePost"
-                @refreshLike="refreshLike"
                 @refreshCollect="refreshCollect"></post>
           <view style="height: 120rpx;"></view>
 
@@ -156,28 +152,6 @@ export default {
   onLoad () {
     this.loadPost();
   },
-  // mounted () {
-  //   let tabBottom;
-  //   uni.createSelectorQuery()
-  //     .select('#tabs')
-  //     .boundingClientRect((data) => {
-  //       tabBottom = data.bottom;
-  //     })
-  //     .exec();
-  //   // uni.createSelectorQuery()
-  //   //   .select('#tabbar')
-  //   //   .boundingClientRect((data) => {
-  //   //     this.tabbarHeight = data.height;
-  //   //   })
-  //   //   .exec();
-  //   uni.createSelectorQuery()
-  //     .select('#swiper')
-  //     .boundingClientRect((data) => {
-  //       // this.swiperHeight += data.top - tabBottom - this.tabbarHeight;
-  //       this.swiperHeight += data.top - tabBottom;
-  //     })
-  //     .exec();
-  // },
   methods: {
     loadPost () {
       console.log("load data...");

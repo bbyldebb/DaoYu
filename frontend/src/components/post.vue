@@ -11,9 +11,9 @@
           <view class="avatar-info flex main-axis-between">
             <u-avatar :src="postInfo.user.avatarImg"
                       :size="90"
-                      @click="toUserProfile(postInfo.user.userID)"></u-avatar>
+                      @click="toUserProfile()"></u-avatar>
             <view class="name-time font-small"
-                  @click="toUserProfile(postInfo.user.userID)">
+                  @click="toUserProfile()">
               <view class="name">{{ postInfo.user.nickName }}</view>
               <view class="name-place flex gray-text main-axis-between">
                 <view>{{ postInfo.post.timeStr }}</view>
@@ -29,11 +29,11 @@
               <u-image src="/static/post/unsolved.png"
                        width="98rpx"
                        height="98rpx"
-                       v-show="postInfo.post.status==0"></u-image>
+                       v-show="postInfo.post.status!=0"></u-image>
               <u-image src="/static/post/solved.png"
                        width="95rpx"
                        height="95rpx"
-                       v-show="postInfo.post.status!=0"></u-image>
+                       v-show="postInfo.post.status==0"></u-image>
             </view>
           </view>
           <u-toast ref="uToast" />
@@ -118,45 +118,32 @@ export default {
       userID: 0,
     };
   },
-  // mounted: function () {
-  //   this.loadData();
-  // },
-  // watch: {
-  //   postInfo: {
-  //     handler () {
-  //       this.loadData();
-  //     },
-  //   },
-  // },
   methods: {
-    // loadData (postInfo) {
-    //   if (!postInfo) {
-    //     postInfo = this.postInfo;
-    //   }
-    //   this.commentNumber = postInfo.commentNumber;
-    //   this.isSolved = postInfo.solved;
-    //   this.isFollow = postInfo.isFollow;
-    //   this.userId = uni.getStorageSync('userId');
-    // },
     modifyProcess () {
       if (!this.isOpen) {
         this.detail();
-      } else {
-        console.log('修改状态');
+      }
+      else if (uni.getStorageSync('userID') == this.postInfo.post.userID) {
+        if (this.postInfo.post.status == 0) {
+          this.$refs.uToast.show({
+            title: '该求助帖已得到解决',
+            type: 'info'
+          });
+        }
+        else {
+          this.$emit('modifyProcess');
+        }
       }
     },
     comment () {
       if (!this.isOpen) {
         this.detail();
-      } else {
-        console.log('聚焦评论框');
-        uni.$emit('focus');
       }
     },
     detail () {
       if (!this.isOpen) {
         uni.navigateTo({
-          url: `../detail/detail?id=${this.postInfo.post.postID}`,
+          url: `../detail/detail?postID=${this.postInfo.post.postID}`,
         });
       }
     },
@@ -166,11 +153,10 @@ export default {
         urls: [this.postInfo.post.image],
       });
     },
-    toUserProfile (otherUserID) {
+    toUserProfile () {
       if (!this.isOpen) {
-        console.log(otherUserID)
         uni.navigateTo({
-          url: `../person/profile`,
+          url: `../person/profile?userID=${this.postInfo.user.userID}`,
         });
       }
     }
