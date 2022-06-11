@@ -56,6 +56,13 @@ const followPost = function (userID,postID) {
 	});
 }; 
 
+const unfollowPost = function (userID,postID) {
+	return request('/unfollowPost', 'GET',{
+		userID:userID,
+		postID:postID
+	});
+}; 
+
 const setPostStatusZero = function (postID) {
 	return request('/setPostStatusZero', 'GET',{
 		postID:postID
@@ -105,7 +112,7 @@ const searchPost = function (keyword) {
 
 export {
 	login,getUserInfo,modifyUserInfo,
-	getAllPost,getAllMyPost,getAllMyFollowPost,getPostDetailWithComments,followPost,setPostStatusZero,publishPost,
+	getAllPost,getAllMyPost,getAllMyFollowPost,getPostDetailWithComments,followPost,unfollowPost,setPostStatusZero,publishPost,
 	addComment,addTag,getAllTags,
 	searchPost
 };

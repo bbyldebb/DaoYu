@@ -45,9 +45,9 @@
 
         <view class="tags flex flex-wrap">
           <u-tag class="u-tag"
-                 v-for="topic in postInfo.topics"
-                 :key="topic.id"
-                 :text="topic.content"
+                 v-for="topic in postInfo.tagList"
+                 :key="topic.tagID"
+                 :text="topic.tagName"
                  type="info"
                  bg-color="var(--primary-color-3)"
                  mode="dark"></u-tag>
@@ -68,19 +68,21 @@
           <view class="button-icon flex">
             <u-icon name="heart"
                     size="37"
-                    @click="collect()"
+                    @click="follow()"
                     v-show="!isCollected"></u-icon>
             <view class="font-small"
                   style="margin-left: 7rpx"
+                  @click="follow()"
                   v-show="!isCollected">
               点击关注
             </view>
             <u-icon name="heart-fill"
                     size="37"
-                    @click="cancelCollect()"
+                    @click="unfollow()"
                     v-show="isCollected"></u-icon>
             <view class="font-small"
                   style="margin-left: 7rpx"
+                  @click="unfollow()"
                   v-show="isCollected">
               已关注
             </view>
@@ -110,13 +112,34 @@
   </view>
 </template>
 <script>
+import { followPost, unfollowPost, getAllMyFollowPost } from '../js/api';
 export default {
   props: ['postInfo', 'isOpen', 'isPersonHomepage'],
   data () {
     return {
       isCollected: false,
-      userID: 0,
+      followPosts: []
     };
+  },
+  mounted () {
+    getAllMyFollowPost(uni.getStorageSync('userID')).then(res => {
+      var i;
+      for (i = 0; i < res[1].data.length; i++) {
+        this.followPosts.push(res[1].data[i].post.postID)
+      }
+    })
+  },
+  watch: {
+    followPosts: {
+      handler () {
+        if (this.followPosts.includes(this.postInfo.post.postID)) {
+          this.isCollected = true;
+        }
+        else {
+          this.isCollected = false;
+        }
+      },
+    },
   },
   methods: {
     modifyProcess () {
@@ -159,6 +182,25 @@ export default {
           url: `../person/profile?userID=${this.postInfo.user.userID}`,
         });
       }
+    },
+    follow () {
+      followPost(uni.getStorageSync('userID'), this.postInfo.post.postID).then(res => {
+        if (res[1].statusCode == 200) {
+          this.followPosts.push(this.postInfo.post.postID);
+        } else {
+          console.log(res);
+        }
+      })
+    },
+    unfollow () {
+      unfollowPost(uni.getStorageSync('userID'), this.postInfo.post.postID).then(res => {
+        var postID = this.postInfo.post.postID;
+        if (res[1].statusCode == 200) {
+          this.followPosts = this.followPosts.filter(function (item) { return item != postID });
+        } else {
+          console.log(res);
+        }
+      })
     }
   },
 };
