@@ -4,7 +4,8 @@
       <view class="confirm-bar flex main-axis-end">
         <u-button @click="publishPost"
                   :custom-style="publishBtnStyle"
-                  hover-class="none">发布</u-button>
+                  hover-class="none"
+                  :disabled="content === ''">发布</u-button>
       </view>
 
       <u-line color="info"
@@ -128,8 +129,9 @@ export default {
   },
   onShow:function(){
     let pages = getCurrentPages(); 
-    let prevPage = pages[pages.length - 1]; 
+    let prevPage = pages[pages.length - 1];
     this.topics=prevPage.topics;
+    if(this.topics==null)this.topics='';
   },
   methods: {
     getLocation () {
