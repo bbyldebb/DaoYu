@@ -1,0 +1,6 @@
+com\daoyu\dao\testTagDao.class
+com\daoyu\service\testUserService.class
+com\daoyu\utils\testParse.class
+com\daoyu\dao\testPostDao.class
+com\daoyu\dao\testCommentDao.class
+com\daoyu\dao\testUserDao.class
