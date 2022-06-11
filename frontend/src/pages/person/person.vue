@@ -117,15 +117,18 @@
                          class="scroll-box">
               <post v-for="(postInfo, index) in userPosts"
                     :key="index"
-                    :postInfo="postInfo"
+                     :post-info="postInfo"
                     :isOpen="true"
-                    @deletePost="updateDeletePost"></post>
+                    :isPersonHomepage="false"
+                    @deletePost="updateDeletePost"
+                    @refreshLike="refreshLike"
+                    @refreshCollect="refreshCollect"></post>
             </scroll-view>
           </swiper-item>
           <swiper-item>
             <scroll-view scroll-y="true"
                          class="scroll-box">
-              <post v-for="(postInfo, index) in histories"
+              <post v-for="(postInfo, index) in followPosts"
                     :key="index"
                     :postInfo="postInfo"
                     :isOpen="true"
@@ -147,17 +150,22 @@
 </template>
 
 <script>
+import { getAllMyPost,getAllMyFollowPost,getUserInfo } from '../../js/api';
+import post from '../../components/post.vue'
 export default {
+   components: {
+    post,
+  },
   data () {
     return {
       swiperHeight: 0,
       tabbarHeight: 0,
       swiperBarTop: 0,
       cardHeight: 0,
-      id: null,
-      avatarUrl: 'https://img.zcool.cn/community/01d6f65ddca03ca8012129e2c96940.jpg@1280w_1l_2o_100sh.jpg',
-      nickName: '游客',
-      introduction: '这个人很神秘，什么都没有说',
+      id: 123456,
+      avatarUrl: '',
+      nickName: '',
+      introduction: '',
       customStyle: {
         width: '500rpx',
         height: '56rpx',
@@ -177,7 +185,8 @@ export default {
       thisindex: 0,
       currentBottomTab: 2,
       collections: null,
-      userPosts: null,
+      userPosts: [],
+      followPosts:[],
       bottomTabList: [
         {
           iconPath: "home",
@@ -202,7 +211,7 @@ export default {
       show_message: '授权登录',
     };
   },
-  onShow () {
+  onLoad () {
     // getMyInformation().then((res) => {
     //   const data = res[1].data.data;
     //   this.scores = data.points;
@@ -226,13 +235,26 @@ export default {
     //     this.feedbacks = res[1].data.data.feedbacks;
     //   });
     // });
-    console.log(uni.getStorageSync('userInfo'));
-    console.log(uni.getStorageSync('userID'));
-    if (uni.getStorageSync('userID') === '') {
+    if (uni.getStorageSync('userId') === '') {
       this.show_message = '授权登录';
     } else {
       this.show_message = '编辑资料';
     }
+    this.id=uni.getStorageSync('userID')
+    getUserInfo(this.id).then((res)=>{
+      console.log(res);
+      this.avatarUrl=res[1].data.avatarImg;
+      this.nickName=res[1].data.nickName;
+      this.introduction=res[1].data.introduction;
+    });
+    getAllMyPost(this.id).then((res)=>{
+      this.userPosts=res[1].data;
+      console.log(this.userPosts);
+    });
+    getAllMyFollowPost(this.id).then((res)=>{
+      this.followPosts=res[1].data;
+      console.log(this.followPosts);
+    });
   },
   mounted () {
     let cardBottom;

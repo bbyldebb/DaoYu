@@ -15,11 +15,12 @@ const getUserInfo = function (userID) {
 	});
 }; 
 
-const modifyUserInfo = function (userID,gender,birthday,address,introduction) {
+const modifyUserInfo = function (userID,gender,birthday,phoneNum,address,introduction) {
 	return request('/modifyUserInfo', 'GET',{
 		userID:userID,
 		gender:gender,
 		birthday:birthday,
+		phoneNum:phoneNum,
 		address:address,
 		introduction:introduction
 	});

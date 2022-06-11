@@ -4,8 +4,7 @@
       <view class="confirm-bar flex main-axis-end">
         <u-button @click="publishPost"
                   :custom-style="publishBtnStyle"
-                  hover-class="none"
-                  :disabled="content === ''">发布</u-button>
+                  hover-class="none">发布</u-button>
       </view>
 
       <u-line color="info"
@@ -28,7 +27,8 @@
                   ref="uUpload"
                   :form-data="form"
                   :header="header"
-                  show-progress="false"></u-upload>
+                  show-progress="false"
+                  onload=""></u-upload>
       </view>
 
       <view class="place-bar flex"
@@ -81,6 +81,7 @@
 </template>
 
 <script>
+import { publishPost } from '../../js/api';
 export default {
   data () {
     return {
@@ -100,37 +101,35 @@ export default {
         id: '',
       },
       content: '',
-      place: '填写地址',
-      topics: [],
+      image:'',
+      place: '选择地址',
+      topics: '',
       topicsName: '选择话题',
       state: '紧急状态',
       showState: false,
       stateList: [
         {
-          value: '0',
+          value: '1',
           label: '普通求助'
         },
         {
-          value: '1',
+          value: '2',
           label: '略微紧急'
         },
         {
-          value: '2',
+          value: '3',
           label: '十万火急'
         }
       ],
     };
   },
   onLoad: function () {
-    // uni.$on('referTopics', (res) => {
-    //   this.referTopics = res;
-    //   const newContent = this.referTopics
-    //     .map((item) => {
-    //       return item.topic;
-    //     })
-    //     .join(' , ');
-    //   this.referTopicsName = newContent;
-    // });
+   
+  },
+  onShow:function(){
+    let pages = getCurrentPages(); 
+    let prevPage = pages[pages.length - 1]; 
+    this.topics=prevPage.topics;
   },
   methods: {
     getLocation () {
@@ -147,6 +146,7 @@ export default {
       uni.navigateTo({
         url: './topic',
       });
+      //this.topics=origin.tagID;
     },
     chooseStates () {
       this.showState = true
@@ -155,6 +155,23 @@ export default {
       this.state = e[0].label
     },
     publishPost () {
+      if(this.state=='普通求助'||this.state=='紧急状态'){
+        this.state=1;
+      }else if(this.state=='略微紧急'){
+        this.state=2;
+      }else{
+        this.state=3;
+      }
+      if(this.$refs.uUpload.lists.length!=0){
+        this.image=this.$refs.uUpload.lists[0].url;
+      }
+      publishPost(uni.getStorageSync('userID'),this.content,this.image,
+      this.place,this.topics,this.state).then((res)=>{
+        console.log(res);
+        wx.switchTab({
+          url: '../index/index'
+        });
+      });
     },
   },
 };
