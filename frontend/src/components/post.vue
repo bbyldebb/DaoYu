@@ -11,9 +11,9 @@
           <view class="avatar-info flex main-axis-between">
             <u-avatar :src="postInfo.user.avatarImg"
                       :size="90"
-                      @click="toUserProfile(postInfo.user.userID)"></u-avatar>
+                      @click="toUserProfile()"></u-avatar>
             <view class="name-time font-small"
-                  @click="toUserProfile(postInfo.user.userID)">
+                  @click="toUserProfile()">
               <view class="name">{{ postInfo.user.nickName }}</view>
               <view class="name-place flex gray-text main-axis-between">
                 <view>{{ postInfo.post.timeStr }}</view>
@@ -29,11 +29,11 @@
               <u-image src="/static/post/unsolved.png"
                        width="98rpx"
                        height="98rpx"
-                       v-show="postInfo.post.status==0"></u-image>
+                       v-show="postInfo.post.status!=0"></u-image>
               <u-image src="/static/post/solved.png"
                        width="95rpx"
                        height="95rpx"
-                       v-show="postInfo.post.status!=0"></u-image>
+                       v-show="postInfo.post.status==0"></u-image>
             </view>
           </view>
           <u-toast ref="uToast" />
@@ -45,9 +45,9 @@
 
         <view class="tags flex flex-wrap">
           <u-tag class="u-tag"
-                 v-for="topic in postInfo.topics"
-                 :key="topic.id"
-                 :text="topic.content"
+                 v-for="topic in postInfo.tagList"
+                 :key="topic.tagID"
+                 :text="topic.tagName"
                  type="info"
                  bg-color="var(--primary-color-3)"
                  mode="dark"></u-tag>
@@ -68,19 +68,21 @@
           <view class="button-icon flex">
             <u-icon name="heart"
                     size="37"
-                    @click="collect()"
+                    @click="follow()"
                     v-show="!isCollected"></u-icon>
             <view class="font-small"
                   style="margin-left: 7rpx"
+                  @click="follow()"
                   v-show="!isCollected">
               点击关注
             </view>
             <u-icon name="heart-fill"
                     size="37"
-                    @click="cancelCollect()"
+                    @click="unfollow()"
                     v-show="isCollected"></u-icon>
             <view class="font-small"
                   style="margin-left: 7rpx"
+                  @click="unfollow()"
                   v-show="isCollected">
               已关注
             </view>
@@ -110,53 +112,61 @@
   </view>
 </template>
 <script>
+import { followPost, unfollowPost, getAllMyFollowPost } from '../js/api';
 export default {
   props: ['postInfo', 'isOpen', 'isPersonHomepage'],
   data () {
     return {
       isCollected: false,
-      userID: 0,
+      followPosts: []
     };
   },
-  // mounted: function () {
-  //   this.loadData();
-  // },
-  // watch: {
-  //   postInfo: {
-  //     handler () {
-  //       this.loadData();
-  //     },
-  //   },
-  // },
+  mounted () {
+    getAllMyFollowPost(uni.getStorageSync('userID')).then(res => {
+      var i;
+      for (i = 0; i < res[1].data.length; i++) {
+        this.followPosts.push(res[1].data[i].post.postID)
+      }
+    })
+  },
+  watch: {
+    followPosts: {
+      handler () {
+        if (this.followPosts.includes(this.postInfo.post.postID)) {
+          this.isCollected = true;
+        }
+        else {
+          this.isCollected = false;
+        }
+      },
+    },
+  },
   methods: {
-    // loadData (postInfo) {
-    //   if (!postInfo) {
-    //     postInfo = this.postInfo;
-    //   }
-    //   this.commentNumber = postInfo.commentNumber;
-    //   this.isSolved = postInfo.solved;
-    //   this.isFollow = postInfo.isFollow;
-    //   this.userID = uni.getStorageSync('userID');
-    // },
     modifyProcess () {
       if (!this.isOpen) {
         this.detail();
-      } else {
-        console.log('修改状态');
+      }
+      else if (uni.getStorageSync('userID') == this.postInfo.post.userID) {
+        if (this.postInfo.post.status == 0) {
+          this.$refs.uToast.show({
+            title: '该求助帖已得到解决',
+            type: 'info'
+          });
+        }
+        else {
+          this.$emit('modifyProcess');
+        }
       }
     },
     comment () {
       if (!this.isOpen) {
         this.detail();
-      } else {
-        console.log('聚焦评论框');
-        uni.$emit('focus');
       }
     },
     detail () {
       if (!this.isOpen) {
         uni.navigateTo({
-          url: `../detail/detail?id=${this.postInfo.post.postID}`,
+          url: `../detail/detail?postID=${this.postInfo.post.postID}`,
         });
       }
     },
@@ -166,13 +176,31 @@ export default {
         urls: [this.postInfo.post.image],
       });
     },
-    toUserProfile (otherUserID) {
+    toUserProfile () {
       if (!this.isOpen) {
-        console.log(otherUserID)
         uni.navigateTo({
-          url: `../person/profile`,
+          url: `../person/profile?userID=${this.postInfo.user.userID}`,
         });
       }
+    },
+    follow () {
+      followPost(uni.getStorageSync('userID'), this.postInfo.post.postID).then(res => {
+        if (res[1].statusCode == 200) {
+          this.followPosts.push(this.postInfo.post.postID);
+        } else {
+          console.log(res);
+        }
+      })
+    },
+    unfollow () {
+      unfollowPost(uni.getStorageSync('userID'), this.postInfo.post.postID).then(res => {
+        var postID = this.postInfo.post.postID;
+        if (res[1].statusCode == 200) {
+          this.followPosts = this.followPosts.filter(function (item) { return item != postID });
+        } else {
+          console.log(res);
+        }
+      })
     }
   },
 };
