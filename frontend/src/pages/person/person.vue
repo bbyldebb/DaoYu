@@ -212,30 +212,12 @@ export default {
     };
   },
   onLoad () {
-    // getMyInformation().then((res) => {
-    //   const data = res[1].data.data;
-    //   this.scores = data.points;
-    //   this.vitality = data.level;
-    //   this.fans = data.fans;
-    //   this.followers = data.followers;
-    //   this.likes = data.likes;
-    //   if (data.introduction === '') {
-    //     this.introduction = '这个人很懒，什么也没留下~';
-    //   } else this.introduction = data.introduction;
-    //   this.id = data.id;
-    //   if (data.avatarUrl !== null) {
-    //     this.avatarUrl = data.avatarUrl;
-    //     const Base64 = require('js-base64').Base64;
-    //     this.nickName = Base64.decode(data.nickName);
-    //   }
-    //   getUserPost(1, 10, this.id).then((res) => {
-    //     this.userPosts = res[1].data.data.posts;
-    //   });
-    //   getPostFeedbacks(1, 10, this.id).then((res) => {
-    //     this.feedbacks = res[1].data.data.feedbacks;
-    //   });
-    // });
-    if (uni.getStorageSync('userId') === '') {
+    if(uni.getStorageSync('userID')==null||uni.getStorageSync('userID')==''){
+      wx.switchTab({
+        url: '../person/login',
+      });
+    }else{
+       if (uni.getStorageSync('userId') === '') {
       this.show_message = '授权登录';
     } else {
       this.show_message = '编辑资料';
@@ -255,6 +237,7 @@ export default {
       this.followPosts=res[1].data;
       console.log(this.followPosts);
     });
+    }
   },
   mounted () {
     let cardBottom;

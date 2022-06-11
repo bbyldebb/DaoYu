@@ -32,7 +32,7 @@
             <text>#{{ item.tagName }}</text>
             <u-image width="45rpx"
                      height="45rpx"
-                     src="/static/publish/hot.png"></u-image>
+                     src="/static/post/hot.png"></u-image>
           </view>
           <view v-show="item.chosen == true"
                 class="selection">
@@ -175,6 +175,7 @@ export default {
             title: '话题创建成功',
             type: 'success',
           });
+          this.filterText='';
           getAllTags().then((res) => {
             if (res[1].statusCode === 200) {
               console.log(res);

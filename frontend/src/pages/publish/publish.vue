@@ -148,7 +148,6 @@ export default {
       uni.navigateTo({
         url: './topic',
       });
-      //this.topics=origin.tagID;
     },
     chooseStates () {
       this.showState = true
@@ -167,11 +166,14 @@ export default {
       if(this.$refs.uUpload.lists.length!=0){
         this.image=this.$refs.uUpload.lists[0].url;
       }
+      if(this.place=='选择地址'){
+        this.place='';
+      }
       publishPost(uni.getStorageSync('userID'),this.content,this.image,
       this.place,this.topics,this.state).then((res)=>{
         console.log(res);
-        wx.switchTab({
-          url: '../index/index'
+        wx.reLaunch({
+          url: `../index/index?prePage=publish`,
         });
       });
     },
