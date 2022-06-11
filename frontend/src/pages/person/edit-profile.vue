@@ -7,7 +7,7 @@
     <u-form :model="userInfo"
             ref="uForm">
       <u-form-item label="性别">
-        <u-input v-model="userInfo.sex"
+        <u-input v-model="userInfo.gender"
                  placeholder="点击选择您的性别信息"
                  type="select"
                  @click="sexShow = true" />
@@ -18,7 +18,7 @@
       </u-form-item>
 
       <u-form-item label="生日">
-        <u-input v-model="userInfo.birth"
+        <u-input v-model="userInfo.birthday"
                  placeholder="点击选择您的生日信息"
                  type="select"
                  @click="birthShow = true" />
@@ -27,9 +27,14 @@
                     @change="chooseBirth"></u-calendar>
       </u-form-item>
 
+      <u-form-item label="电话"
+                   prop="phoneNum">
+        <u-input v-model="userInfo.phoneNum"
+                 placeholder="请输入合法的电话号码" />
+      </u-form-item>
       <u-form-item label="地址"
                    prop="place">
-        <u-input v-model="userInfo.place"
+        <u-input v-model="userInfo.address"
                  placeholder="请输入地址信息,不超过64个字符" />
       </u-form-item>
       <u-form-item label="简介"
@@ -45,6 +50,7 @@
 </template>
 
 <script>
+import { getUserInfo,modifyUserInfo } from '../../js/api';
 export default {
   data () {
     return {
@@ -88,10 +94,16 @@ export default {
     };
   },
   onLoad: function () {
-    getMyInformation().then((res) => {
-      this.userInfo = res[1].data.data;
-      if (this.userInfo.birth === null) {
-        this.userInfo.birth = '';
+    getUserInfo(uni.getStorageSync('userID')).then((res) => {
+      console.log(res)
+      this.userInfo = res[1].data;
+      if(this.userInfo.gender==1){
+        this.userInfo.gender='男';
+      }else{
+        this.userInfo.gender='女';
+      }
+      if (this.userInfo.birthday === null) {
+        this.userInfo.birthday = '';
       }
     });
   },
@@ -100,21 +112,24 @@ export default {
   },
   methods: {
     chooseSex (e) {
-      this.userInfo.sex = e[0].label;
+      this.userInfo.gender = e[0].label;
+
     },
     chooseBirth (e) {
-      this.userInfo.birth = e.year + '-' + e.month + '-' + e.day;
+      this.userInfo.birthday = e.year + '-' + e.month + '-' + e.day;
     },
     submit () {
-      updateUserInformation(
-        this.userInfo.place,
-        this.userInfo.introduction,
-        this.userInfo.sex,
-        this.userInfo.birth
-      ).then((res) => {
+      modifyUserInfo(
+        this.userInfo.userID,
+      (this.userInfo.gender=='男'?1:2),
+        this.userInfo.birthday,
+        this.userInfo.phoneNum,
+        this.userInfo.address,
+        this.userInfo.introduction
+      ).then(() => {
         console.log('complete submit');
         uni.reLaunch({
-          url: '../mine/mine',
+          url: '../person/person',
         });
       });
     },

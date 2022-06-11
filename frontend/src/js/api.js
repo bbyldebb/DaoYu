@@ -15,22 +15,12 @@ const getUserInfo = function (userID) {
 	});
 }; 
 
-const modifyUserInfo = function (userID,gender,birthday,address,introduction) {
+const modifyUserInfo = function (userID,gender,birthday,phoneNum,address,introduction) {
 	return request('/modifyUserInfo', 'GET',{
 		userID:userID,
 		gender:gender,
 		birthday:birthday,
-		address:address,
-		introduction:introduction
-	});
-}; 
-
-const modify = function (userID,gender,birthday,address,introduction) {
-	// https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx672dc2b334d3b9ae&secret=93a88d99d1a39698f9715ab1b5f1db19&code=023Crall2ykmj94Uh1nl23b8Cq1Cral6&grant_type=authorization_code
-	return request('/modifyUserInfo', 'GET',{
-		userID:userID,
-		gender:gender,
-		birthday:birthday,
+		phoneNum:phoneNum,
 		address:address,
 		introduction:introduction
 	});
@@ -62,6 +52,13 @@ const getPostDetailWithComments = function (postID) {
 
 const followPost = function (userID,postID) {
 	return request('/followPost', 'GET',{
+		userID:userID,
+		postID:postID
+	});
+}; 
+
+const unfollowPost = function (userID,postID) {
+	return request('/unfollowPost', 'GET',{
 		userID:userID,
 		postID:postID
 	});
@@ -116,7 +113,7 @@ const searchPost = function (keyword) {
 
 export {
 	login,getUserInfo,modifyUserInfo,
-	getAllPost,getAllMyPost,getAllMyFollowPost,getPostDetailWithComments,followPost,setPostStatusZero,publishPost,
+	getAllPost,getAllMyPost,getAllMyFollowPost,getPostDetailWithComments,followPost,unfollowPost,setPostStatusZero,publishPost,
 	addComment,addTag,getAllTags,
 	searchPost
 };

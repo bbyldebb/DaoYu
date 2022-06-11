@@ -27,9 +27,9 @@
             v-for="item in topics.slice(0, 3)"
             :key="item">
         <view class="hot-topic flex cross-axis-center main-axis-between"
-              @click="chooseTopic(item.id)">
+              @click="chooseTopic(item.tagID)">
           <view class="flex">
-            <text>#{{ item.topic }}</text>
+            <text>#{{ item.tagName }}</text>
             <u-image width="45rpx"
                      height="45rpx"
                      src="/static/publish/hot.png"></u-image>
@@ -56,8 +56,8 @@
             v-for="item in filterList"
             :key="item">
         <view class="hot-topic flex cross-axis-center main-axis-between"
-              @click="chooseTopic(item.id)">
-          <text>#{{ item.topic }}</text>
+              @click="chooseTopic(item.tagID)">
+          <text>#{{ item.tagName }}</text>
           <view v-show="item.chosen == true"
                 class="selection">
             <u-image width="37rpx"
@@ -74,10 +74,13 @@
 </template>
 
 <script>
+import { addTag,getAllTags } from '../../js/api';
 export default {
   data () {
     return {
       filterText: '',
+      tagList:[],
+      tagString:'',
       customStyle: {
         width: '70%',
         height: '45rpx',
@@ -108,22 +111,17 @@ export default {
       ],
     };
   },
-  onLoad (options) {
-    getTopics().then((res) => {
+  onLoad () {
+    getAllTags().then((res) => {
       if (res[1].statusCode === 200) {
-        this.topics = res[1].data.data.topics;
+        console.log(res);
+        this.topics = res[1].data;
         this.topics = this.topics.map((element) => {
           return { ...element, chosen: false };
         });
       } else {
         console.log(res);
       }
-      this.topics.filter((item) => {
-        if (item.topic === options.newTopic) {
-          item.chosen = true;
-        }
-        return item;
-      });
     });
   },
   computed: {
@@ -131,7 +129,7 @@ export default {
       let arr = [];
       arr = this.topics.slice(3);
       if (this.filterText) {
-        arr = this.topics.filter((item) => item.topic.includes(this.filterText));
+        arr = this.topics.filter((item) => item.tagName.includes(this.filterText));
       }
       return arr;
     },
@@ -139,44 +137,59 @@ export default {
   methods: {
     chooseTopic (topicID) {
       this.topics.filter((item) => {
-        if (item.id === topicID) {
+        if (item.tagID === topicID) {
           item.chosen = !item.chosen;
         }
         return item;
       });
     },
-    confirm () {
+    confirm () {  
       let referTopics = [];
       referTopics = this.topics.filter((item) => item.chosen);
+      let referTopicsIDs=[];
+      referTopics.forEach((item)=>{
+        referTopicsIDs.push(item.tagID);
+      });
+      let referTopicsIDStr='';
+      referTopicsIDs.forEach((tagID)=>{
+        if(referTopicsIDStr!=''){
+          referTopicsIDStr+='#';
+        }
+        referTopicsIDStr+=tagID;
+      });
+      console.log(referTopicsIDStr);
+
       if (referTopics.length !== 0) {
-        uni.$emit('referTopics', referTopics);
+        let pages = getCurrentPages(); // 获取当前页面栈的实例，以数组形式按栈的顺序给出，第一个元素为首页，最后一个元素为当前页面。
+        let prevPage = pages[pages.length - 2]; //上一页页面实例
+        prevPage.topics=referTopicsIDStr;
         uni.navigateBack({
           delta: 1,
         });
       } else if (this.filterText !== '') {
-        referTopics = this.filterList.filter((item) => item.topic === this.filterText);
+        referTopics = this.filterList.filter((item) => item.tagName === this.filterText);
         if (referTopics.length === 0) {
           const newTopic = this.filterText;
-          addTopic(newTopic);
+          addTag(newTopic);
           this.$refs.uToast.show({
             title: '话题创建成功',
             type: 'success',
           });
-          setTimeout(() => {
-            uni.redirectTo({
-              url: `../posts/topics?newTopic=${newTopic}`,
-            });
-          }, 500);
-          this.topics.filter((item) => {
-            if (item.topic === newTopic) {
-              item.chosen = true;
+          getAllTags().then((res) => {
+            if (res[1].statusCode === 200) {
+              console.log(res);
+              this.topics = res[1].data;
+              this.topics = this.topics.map((element) => {
+                return { ...element, chosen: false };
+              });
+            } else {
+              console.log(res);
             }
-            return item;
-          });
+        });
         } else {
-          uni.$emit('referTopics', referTopics);
-          uni.navigateBack({
-            delta: 1,
+           this.$refs.uToast.show({
+            title: '话题已存在',
+            type:'warning',
           });
         }
       }

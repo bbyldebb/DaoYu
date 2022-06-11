@@ -81,15 +81,15 @@ export default {
       nickName: '小奇的日记',
       time: '22:10',
       content: '',
-      userId: '',
+      userID: '',
     },
     subcomment: Array,
     // eslint-disable-next-line vue/require-prop-type-constructor
     isParentComment: true,
   },
   mounted () {
-    const myId = uni.getStorageSync('userId');
-    if (myId === parseInt(this.comment.userId)) {
+    const myId = uni.getStorageSync('userID');
+    if (myId === parseInt(this.comment.userID)) {
       this.isMine = 1;
     } else {
       this.isMine = 0;

@@ -136,7 +136,7 @@ export default {
     //   this.commentNumber = postInfo.commentNumber;
     //   this.isSolved = postInfo.solved;
     //   this.isFollow = postInfo.isFollow;
-    //   this.userId = uni.getStorageSync('userId');
+    //   this.userID = uni.getStorageSync('userID');
     // },
     modifyProcess () {
       if (!this.isOpen) {
