@@ -47,7 +47,6 @@ export default {
     return {
       postDetail: {},
       comments: {},
-      user: {},
       postID: '',
       showProcess: false
     };

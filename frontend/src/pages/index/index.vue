@@ -152,6 +152,10 @@ export default {
   onLoad () {
     this.loadPost();
   },
+  onPullDownRefresh: function () {
+    wx.showNavigationBarLoading();
+    this.loadPost();
+  },
   methods: {
     loadPost () {
       console.log("load data...");
@@ -161,7 +165,6 @@ export default {
       getAllMyFollowPost(uni.getStorageSync('userID')).then((res) => {
         this.followPostInfos = res[1].data
       });
-
     },
     setIndex (index) {
       this.thisIndex = index;

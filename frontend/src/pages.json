@@ -6,7 +6,9 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "道雨"
+        "navigationBarTitleText": "道雨",
+        "enablePullDownRefresh": true,
+        "backgroundTextStyle": "dark"
       }
     },
     {
