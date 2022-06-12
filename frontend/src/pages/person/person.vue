@@ -1,6 +1,7 @@
 <template>
   <view class="background">
     <view>
+      <u-toast ref="uToast" />
       <view class="card flex"
             id="card">
         <view class="cardIdentify flex flex-col main-axis-center cross-axis-center">
@@ -117,8 +118,8 @@
                          class="scroll-box">
               <post v-for="(postInfo, index) in userPosts"
                     :key="index"
-                     :post-info="postInfo"
-                    :isOpen="true"
+                    :post-info="postInfo"
+                    :isOpen="false"
                     :isPersonHomepage="false"
                     @deletePost="updateDeletePost"
                     @refreshLike="refreshLike"
@@ -128,10 +129,15 @@
           <swiper-item>
             <scroll-view scroll-y="true"
                          class="scroll-box">
+              <!-- 默认 -->
+              <view class="flex main-axis-center"
+                    style="margin-top: 35rpx; font-size: 30rpx"
+                    v-if="followPosts.length===0">你还没有关注任何求助帖~</view>
+
               <post v-for="(postInfo, index) in followPosts"
                     :key="index"
                     :postInfo="postInfo"
-                    :isOpen="true"
+                    :isOpen="false"
                     @deletePost="updateDeletePost"></post>
             </scroll-view>
           </swiper-item>
@@ -150,10 +156,10 @@
 </template>
 
 <script>
-import { getAllMyPost,getAllMyFollowPost,getUserInfo } from '../../js/api';
+import { getAllMyPost, getAllMyFollowPost, getUserInfo } from '../../js/api';
 import post from '../../components/post.vue'
 export default {
-   components: {
+  components: {
     post,
   },
   data () {
@@ -184,9 +190,8 @@ export default {
       // 当前item位置
       thisindex: 0,
       currentBottomTab: 2,
-      collections: null,
       userPosts: [],
-      followPosts:[],
+      followPosts: [],
       bottomTabList: [
         {
           iconPath: "home",
@@ -208,36 +213,21 @@ export default {
           pagePath: '/pages/person/person',
         }
       ],
-      show_message: '授权登录',
     };
   },
   onLoad () {
-    if(uni.getStorageSync('userID')==null||uni.getStorageSync('userID')==''){
-      wx.switchTab({
-        url: '../person/login',
-      });
-    }else{
-       if (uni.getStorageSync('userId') === '') {
-      this.show_message = '授权登录';
-    } else {
-      this.show_message = '编辑资料';
+    if (uni.getStorageSync('userID') === '') {
+      uni.reLaunch({
+        url: "../person/login",
+      })
     }
-    this.id=uni.getStorageSync('userID')
-    getUserInfo(this.id).then((res)=>{
-      console.log(res);
-      this.avatarUrl=res[1].data.avatarImg;
-      this.nickName=res[1].data.nickName;
-      this.introduction=res[1].data.introduction;
+    this.id = uni.getStorageSync('userID')
+    getUserInfo(this.id).then((res) => {
+      this.avatarUrl = res[1].data.avatarImg;
+      this.nickName = res[1].data.nickName;
+      this.introduction = res[1].data.introduction;
     });
-    getAllMyPost(this.id).then((res)=>{
-      this.userPosts=res[1].data;
-      console.log(this.userPosts);
-    });
-    getAllMyFollowPost(this.id).then((res)=>{
-      this.followPosts=res[1].data;
-      console.log(this.followPosts);
-    });
-    }
+    this.loadData();
   },
   mounted () {
     let cardBottom;
@@ -278,27 +268,24 @@ export default {
       uni.navigateTo({
         url: './edit-profile',
       });
-      // if (uni.getStorageSync('userId') === '') {
-      //   uni.navigateTo({
-      //     url: '../index/login',
-      //     fail: (res) => {
-      //       console.log(res);
-      //     },
-      //   });
-      // } else {
-      //   uni.navigateTo({
-      //     url: './edit-profile',
-      //   });
-      // }
     },
     // 切换触发的事件
     toggle (e) {
       const index = e.detail.current;
       this.target = index;
+      this.loadData();
     },
     // 点击nav控制下面的展示
     setIndex (index) {
       this.thisindex = index;
+    },
+    loadData () {
+      getAllMyPost(this.id).then((res) => {
+        this.userPosts = res[1].data;
+      });
+      getAllMyFollowPost(this.id).then((res) => {
+        this.followPosts = res[1].data;
+      });
     }
   },
 };
