@@ -92,6 +92,8 @@
 
     </swiper>
 
+     <u-toast ref="uToast" />
+
     <!-- 底部导航栏 -->
     <u-tabbar v-model="currentBottomTab"
               :list="bottomTabList"
@@ -149,8 +151,16 @@ export default {
       followPostInfos: []
     }
   },
-  onLoad () {
+  onLoad:function (options) {
     this.loadPost();
+    console.log('options...');
+    console.log(options);
+    if(options.prePage=='publish'){
+      this.$refs.uToast.show({
+        title: '帖子已发布',
+        type: 'success'
+      });
+    }
   },
   onPullDownRefresh: function () {
     wx.showNavigationBarLoading();
@@ -176,9 +186,16 @@ export default {
       this.loadPost();
     },
     publishMoments () {
-      uni.navigateTo({
-        url: '../publish/publish',
-      });
+      if(uni.getStorageSync('userID')==null||uni.getStorageSync('userID')==''){
+          wx.switchTab({
+            url: '../person/login',
+          });
+        }
+      else{
+        uni.navigateTo({
+          url: '../publish/publish',
+        });
+      }
     },
     goSearch () {
       uni.navigateTo({
